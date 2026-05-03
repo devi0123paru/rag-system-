@@ -1,0 +1,79 @@
+CARDIAC EMERGENCY PROTOCOLS - EMS FIELD GUIDE
+
+=== PROTOCOL C-1: CHEST PAIN / POSSIBLE CARDIAC EVENT ===
+Indications: Patient presents with chest pain, pressure, tightness, or discomfort.
+
+CRITICAL ASSESSMENT SIGNS (treat as STEMI until proven otherwise):
+- Chest pain radiating to left arm, jaw, or back
+- Diaphoresis (sweating) with chest pain
+- Nausea/vomiting with chest discomfort
+- Shortness of breath with chest pain
+- Pain score > 7/10
+- Age > 50 with any chest discomfort
+
+INITIAL ACTIONS:
+1. Position patient supine or semi-recumbent (45 degrees if SOB)
+2. Administer O2 if SpO2 < 94% (target 94-98%)
+3. Obtain 12-lead ECG within 10 minutes of patient contact
+4. Establish IV access (large bore, antecubital)
+5. Administer Aspirin 324mg PO (chew) if no contraindications
+6. Continuous cardiac monitoring
+7. Obtain vital signs every 5 minutes
+
+CRITICALITY SCORE: HIGH if any of the following present:
+- ST elevation > 1mm in 2 contiguous leads = STEMI â†’ CATH LAB ACTIVATION
+- New LBBB with symptoms = STEMI equivalent
+- HR < 40 or > 150 with hemodynamic compromise
+- SBP < 90 mmHg
+- GCS < 14
+
+HOSPITAL ROUTING:
+- STEMI confirmed: Route to PCI-capable hospital (door-to-balloon < 90 min)
+- Unstable: Nearest emergency department
+- Stable, no ST changes: Nearest ED with cardiology
+
+=== PROTOCOL C-2: CARDIAC ARREST ===
+IMMEDIATE ACTIONS:
+1. Confirm unresponsiveness and absent breathing
+2. Call for AED
+3. Begin CPR: 30 compressions : 2 breaths ratio
+4. Compression depth: 2-2.4 inches adults
+5. Rate: 100-120/min
+6. Minimize interruptions (< 10 sec)
+7. Attach AED/defibrillator ASAP
+
+SHOCKABLE RHYTHMS (VF/pulseless VT):
+- Shock at 200J biphasic immediately
+- Resume CPR for 2 minutes post-shock
+- Epinephrine 1mg IV/IO every 3-5 min
+- Amiodarone 300mg IV/IO after 3rd shock
+
+NON-SHOCKABLE (PEA/Asystole):
+- CPR continuous
+- Epinephrine 1mg IV/IO every 3-5 min
+- Treat reversible causes (H's and T's)
+
+CRITICALITY SCORE: CRITICAL â€” Transport to nearest facility with resuscitation capability.
+
+=== PROTOCOL C-3: HEART FAILURE / ACUTE PULMONARY EDEMA ===
+SIGNS/SYMPTOMS:
+- Severe shortness of breath, orthopnea
+- Pink frothy sputum
+- Bilateral crackles/rales
+- JVD present
+- SpO2 < 90% on room air
+
+CRITICAL INDICATORS:
+- SpO2 < 85% despite O2 = CRITICAL
+- RR > 30/min = HIGH
+- SBP < 90 = CRITICAL (cardiogenic shock)
+- Altered mental status = CRITICAL
+
+TREATMENT:
+1. Sit patient upright (legs dependent)
+2. High-flow O2, CPAP if available and SpO2 < 90%
+3. Nitroglycerin 0.4mg SL (if SBP > 100 and no recent PDE5 inhibitor use)
+4. Furosemide 40mg IV if known CHF
+5. Monitor continuously
+
+HOSPITAL: Nearest ED; alert for possible ICU admission.

@@ -1,0 +1,111 @@
+HOSPITAL DIRECTORY - EMERGENCY CAPABILITIES
+
+=== METRO GENERAL HOSPITAL ===
+ID: MGH-001
+Type: Level I Trauma Center
+Address: 1200 Emergency Blvd, Metro City
+GPS: 40.7589, -73.9851
+Phone: (555) 100-0001
+Trauma Activation: (555) 100-0911
+
+CAPABILITIES:
+- 24/7 Trauma Surgery
+- STEMI PCI/Cath Lab (door-to-balloon avg: 52 min)
+- Comprehensive Stroke Center (thrombectomy available)
+- Burn Unit (20 beds)
+- Hyperbaric Chamber
+- Pediatric Emergency Department
+- Neurosurgery 24/7
+- Cardiac Surgery 24/7
+- NICU Level III
+
+CURRENT STATUS: Operational
+ED Diversion: No
+Trauma Diversion: No
+Estimated Wait: 18 min (updated hourly)
+
+SPECIALTIES ACCEPTING: All
+
+---
+
+=== RIVERSIDE MEDICAL CENTER ===
+ID: RMC-002
+Type: Level II Trauma Center
+Address: 450 River Road, Riverside District
+GPS: 40.7482, -73.9956
+Phone: (555) 200-0001
+
+CAPABILITIES:
+- 24/7 Trauma Surgery
+- STEMI PCI/Cath Lab (door-to-balloon avg: 67 min)
+- Primary Stroke Center (tPA capable, NO thrombectomy)
+- No Burn Unit
+- Orthopedic Surgery 24/7
+- Neurosurgery on-call (30 min response)
+- Pediatric ED
+
+CURRENT STATUS: Operational
+ED Diversion: No
+Trauma Diversion: No
+Estimated Wait: 25 min
+
+ROUTING NOTES: Do NOT route LVO stroke here — no thrombectomy. Route STEMI if MGH-001 ETA > 30 min longer.
+
+---
+
+=== ST. CATHERINE'S COMMUNITY HOSPITAL ===
+ID: SCH-003
+Type: Level III Trauma Center
+Address: 88 Community Ave, Westside
+GPS: 40.7634, -74.0159
+Phone: (555) 300-0001
+
+CAPABILITIES:
+- Emergency stabilization only
+- No cardiac cath lab (transfer required for STEMI)
+- Acute Stroke Ready (tPA only, transfer for anything else)
+- No trauma surgery (stabilize + transfer)
+- General Surgery on-call
+
+CURRENT STATUS: Operational
+ED Diversion: YES (high volume)
+Trauma Diversion: YES
+Estimated Wait: 45 min
+
+ROUTING NOTES: Use only for minor emergencies or when other hospitals unreachable.
+
+---
+
+=== CHILDREN'S SPECIALTY HOSPITAL ===
+ID: CSH-004
+Type: Pediatric Specialty Center
+Address: 220 Pediatric Way, North District
+GPS: 40.7712, -73.9734
+Phone: (555) 400-0001
+
+CAPABILITIES:
+- Pediatric Emergency (all ages 0-18)
+- PICU Level I
+- Pediatric Cardiac Surgery
+- Pediatric Neurosurgery
+- Pediatric Trauma (Level I)
+- NICU Level IV
+
+ROUTING: All critical pediatric patients (0-14 years) unless time-critical and closer adult hospital.
+
+---
+
+=== EASTSIDE URGENT CARE / ED HYBRID ===
+ID: EUC-005
+Type: Freestanding ED
+Address: 1050 East Main St, Eastside
+GPS: 40.7401, -73.9621
+Phone: (555) 500-0001
+
+CAPABILITIES:
+- Emergency evaluation and stabilization
+- CT scanner
+- No surgery
+- Transfer agreements with MGH-001 and RMC-002
+
+ROUTING: Minor emergencies only. NOT appropriate for trauma, STEMI, stroke, or critical patients.

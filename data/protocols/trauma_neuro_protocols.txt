@@ -1,0 +1,95 @@
+TRAUMA & NEUROLOGICAL EMERGENCY PROTOCOLS
+
+=== PROTOCOL T-1: MAJOR TRAUMA ===
+MECHANISM OF INJURY (High-risk MOI → automatic CRITICAL):
+- High-speed MVC (> 40 mph), rollover, ejection
+- Fall > 20 feet (or > 3x patient height)
+- Penetrating injury to head/neck/torso
+- Motorcycle crash > 20 mph
+- Pedestrian/cyclist struck by vehicle
+
+PRIMARY SURVEY (ABCDE):
+A - Airway: Clear; jaw thrust if C-spine concern; intubate if GCS ≤ 8
+B - Breathing: RR, SpO2, bilateral breath sounds, tension pneumo?
+C - Circulation: HR, BP, capillary refill, control hemorrhage (direct pressure, tourniquet)
+D - Disability: GCS, pupils, BGL
+E - Exposure: Full body exam, maintain warmth
+
+CRITICALITY ASSESSMENT:
+CRITICAL (any one present):
+- GCS < 14
+- SBP < 90 mmHg despite fluid
+- RR < 10 or > 29
+- SpO2 < 90%
+- Penetrating head/chest/abdomen injury
+- Suspected pelvic fracture with instability
+- Amputation proximal to wrist/ankle
+
+HIGH:
+- GCS 14 with mechanism
+- Two or more long bone fractures
+- SBP 90-100 with tachycardia
+
+GOLDEN HOUR PRINCIPLE: Transport time to definitive care should not exceed 60 minutes total.
+PREFERRED HOSPITAL: Level I Trauma Center. If > 30 min away and unstable, go to nearest surgical facility.
+
+=== PROTOCOL N-1: STROKE (FAST Protocol) ===
+RECOGNITION (BE-FAST):
+B - Balance: Sudden loss of balance or coordination
+E - Eyes: Sudden vision changes
+F - Face drooping (ask to smile)
+A - Arm weakness (raise both arms)
+S - Speech difficulty (repeat a sentence)
+T - Time to call 911 / Time of symptom onset
+
+CRITICAL TIME WINDOWS:
+- tPA eligible: Onset < 4.5 hours → STROKE CENTER REQUIRED
+- Thrombectomy eligible: Onset < 24 hours with imaging → Comprehensive Stroke Center
+- Wake-up stroke: Use last known well time
+
+PREHOSPITAL STROKE SCALE (Cincinnati):
+- Facial droop: Normal (symmetric) vs Abnormal (one side droops)
+- Arm drift: Normal (both stay) vs Abnormal (one drifts/falls)
+- Speech: Normal (correct words, clear) vs Abnormal (slurred/wrong words/mute)
+Any ONE abnormal = 72% probability of stroke
+
+CRITICALITY:
+CRITICAL: Any positive BEFAST finding → Stroke Alert activation
+- Large vessel occlusion signs: gaze deviation + hemiplegia + aphasia
+- Hemorrhagic signs: sudden severe headache "thunderclap", vomiting, coma
+
+HOSPITAL ROUTING:
+- Suspected stroke: ALWAYS bypass non-stroke hospitals
+- Thrombectomy capable center preferred if < 30 min extra transport time
+- Pre-notify: "Stroke Alert, ETA [X] minutes, NIHSS estimate [score]"
+
+PREHOSPITAL CARE:
+1. Do NOT give glucose unless BGL confirmed < 60
+2. O2 only if SpO2 < 94%
+3. Keep HOB at 0-15 degrees (flat) unless vomiting
+4. NPO — aspiration risk
+5. Obtain IV access, 12-lead
+6. Do NOT delay transport for extended on-scene care
+
+=== PROTOCOL N-2: SEIZURE ===
+TYPES AND MANAGEMENT:
+Generalized Tonic-Clonic: Protect from injury, do not restrain, time seizure
+Status Epilepticus (> 5 min or no recovery): CRITICAL → Benzodiazepine protocol
+
+CRITICALITY:
+CRITICAL:
+- Active seizure > 5 min
+- First-time seizure with altered LOC post-ictally
+- Seizure with fever > 39°C (meningitis risk)
+- Post-traumatic seizure
+- Pregnancy + seizure (eclampsia)
+- No return to baseline after 30 min
+
+TREATMENT STATUS EPILEPTICUS:
+1. Midazolam 10mg IM (or 5mg IV/IO) → First-line
+2. If no response in 5 min: Lorazepam 4mg IV
+3. If no response: Levetiracetam 60mg/kg IV (max 4.5g)
+4. Continuous: Call medical direction; consider RSI
+
+HOSPITAL: Nearest ED; Level II+ for status epilepticus.
+

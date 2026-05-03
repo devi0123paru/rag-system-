@@ -1,0 +1,99 @@
+TRIAGE PROTOCOLS & PATIENT CRITICALITY ASSESSMENT
+
+=== PREHOSPITAL TRIAGE DECISION GUIDE ===
+
+CRITICALITY LEVELS:
+■ CRITICAL (Red) — Immediate life threat, minutes matter
+■ HIGH (Orange) — Serious, potential deterioration, < 30 min
+■ MODERATE (Yellow) — Urgent but stable, < 60 min
+■ LOW (Green) — Non-urgent, can wait
+■ BLACK — Deceased or non-survivable given resources
+
+=== UNIVERSAL CRITICAL VITAL SIGN THRESHOLDS ===
+Any ONE of these = CRITICAL classification:
+- SpO2 < 90% on oxygen
+- RR < 8 or > 36 breaths/min
+- Heart Rate < 40 or > 180 bpm
+- Systolic BP < 80 mmHg (adult)
+- GCS ≤ 8
+- Temperature > 40°C or < 32°C
+- BGL < 40 mg/dL or > 600 mg/dL
+
+=== SHOCK INDEX (SI) ===
+Formula: SI = Heart Rate / Systolic BP
+- SI < 0.6: Normal
+- SI 0.6–0.9: Normal (borderline)
+- SI 1.0–1.19: Moderate shock (CLASS II hemorrhage)
+- SI ≥ 1.2: Severe shock — CRITICAL — aggressive resuscitation
+
+=== RESPIRATORY EMERGENCIES ===
+
+PROTOCOL R-1: ANAPHYLAXIS
+CRITICAL indicators:
+- Airway: stridor, uvula swelling, hoarse voice
+- Respiratory: wheezing, SpO2 < 93%
+- Cardiovascular: SBP < 90, syncope
+- Cutaneous alone: LOW criticality (may worsen)
+
+TREATMENT:
+1. Epinephrine 0.3mg IM (lateral thigh) — IMMEDIATELY
+2. O2 high-flow
+3. IV access; fluid bolus 1-2L if hypotensive
+4. Diphenhydramine 50mg IV/IM
+5. Methylprednisolone 125mg IV
+6. Repeat epi in 5-15 min if no improvement
+7. Glucagon 1-2mg IV if on beta-blockers
+
+PROTOCOL R-2: RESPIRATORY DISTRESS
+CRITICAL:
+- SpO2 < 88% despite BVM
+- Agonal respirations
+- Apnea
+- Epiglottitis (do not examine oropharynx, keep calm, go to OR-capable hospital)
+
+HIGH:
+- SpO2 88-93% with increased work of breathing
+- RR > 30
+- Accessory muscle use
+- Unable to complete sentences
+
+=== OBSTETRIC EMERGENCIES ===
+
+PROTOCOL O-1: IMMINENT DELIVERY
+Assess crowning — if visible: prepare for field delivery
+CRITICAL indicators:
+- Cord prolapse (CRITICAL — elevate presenting part, immediate transport)
+- Breech presentation (CRITICAL)
+- Shoulder dystocia (McRoberts maneuver, suprapubic pressure)
+- Heavy bleeding with pregnancy (placenta previa/abruption)
+- Pre-eclampsia: BP > 160/110 + headache/visual changes
+
+=== PEDIATRIC CONSIDERATIONS ===
+
+PEDIATRIC VITAL SIGN NORMS (approximate):
+Age        HR        RR      SBP
+Newborn   100-160  40-60   60-80
+1 year    90-150   24-40   80-90
+5 years   70-120   18-30   90-100
+10 years  60-100   16-24   100-115
+
+Pediatric Shock: SBP < 70 + (2 × age in years) = CRITICAL
+Fever > 38°C in neonate (< 3 months) = CRITICAL
+
+=== PAIN SCALE & CRITICALITY ===
+Pain 0-3: LOW (unless with critical vitals)
+Pain 4-6: MODERATE
+Pain 7-9: HIGH
+Pain 10: HIGH to CRITICAL depending on presentation
+
+=== MULTI-CASUALTY INCIDENT (MCI) TRIAGE ===
+START Triage (Simple Triage And Rapid Treatment):
+
+Step 1: Walking wounded? → GREEN (minor)
+Step 2: Breathing? No → Open airway → Still no → BLACK
+Step 3: RR > 30 → RED (critical)
+Step 4: Radial pulse absent / cap refill > 2s → RED
+Step 5: Follow commands? No → RED
+Step 6: All others → YELLOW (delayed)
+
+MCI Dispatch Rule: Do not transport all patients to nearest hospital. Distribute across facilities to avoid ED overwhelm.

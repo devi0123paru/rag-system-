@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEDAI — Emergency Dispatch</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: Arial, sans-serif; background: #060c12; color: #d4e8f4; font-size: 13px; }
+
+/* ── HEADER ── */
+#header {
+  height: 52px;
+  background: #0c1622;
+  border-bottom: 1px solid #1e3a56;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon {
+  width: 34px; height: 34px;
+  background: #ff2d4e;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 14px rgba(255,45,78,0.5);
+  animation: hb 1.8s ease-in-out infinite;
+}
+@keyframes hb { 0%,100%{transform:scale(1)} 30%{transform:scale(1.1)} }
+.brand-name { font-size: 22px; font-weight: 900; letter-spacing: 3px; color: #fff; }
+.brand-name span { color: #ff2d4e; }
+.hstat { display: flex; flex-direction: column; align-items: center; padding: 0 14px; border-left: 1px solid #172a3e; }
+.hstat-label { font-size: 8px; color: #456980; letter-spacing: 1.5px; text-transform: uppercase; }
+.hstat-val { font-size: 13px; font-family: monospace; }
+.hright { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.pill { font-size: 9px; padding: 3px 10px; border-radius: 20px; border: 1px solid; letter-spacing: 1px; font-family: monospace; }
+.pill-green { border-color: #06d6a0; color: #06d6a0; background: rgba(6,214,160,0.08); }
+.pill-blue { border-color: #00b4d8; color: #00b4d8; background: rgba(0,180,216,0.08); }
+
+/* ── ALERT BAR ── */
+#alertbar {
+  display: none;
+  background: #ff2d4e;
+  color: white;
+  padding: 7px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  align-items: center;
+  gap: 10px;
+}
+#alertbar.show { display: flex; }
+#alertclose { margin-left: auto; cursor: pointer; font-size: 16px; }
+
+/* ── LAYOUT ── */
+#app {
+  display: grid;
+  grid-template-columns: 280px 1fr 300px;
+  height: calc(100vh - 52px);
+  overflow: hidden;
+}
+
+/* ── LEFT SIDEBAR ── */
+#sidebar {
+  background: #0c1622;
+  border-right: 1px solid #172a3e;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sec { border-bottom: 1px solid #172a3e; flex-shrink: 0; }
+.sec-title {
+  padding: 10px 14px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #00b4d8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sec-title::before { content:''; width:2px; height:10px; background:#00b4d8; border-radius:2px; display:block; }
+
+/* Timer */
+.timer-wrap { padding: 10px 14px 14px; }
+.timer-num {
+  font-family: monospace;
+  font-size: 34px;
+  font-weight: 700;
+  color: #ffd166;
+  text-align: center;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(255,209,102,0.4);
+}
+.timer-num.red { color: #ff2d4e; animation: blink 0.8s infinite; }
+@keyframes blink { 50%{opacity:0.5} }
+.timer-btns { display: flex; gap: 6px; }
+.tbtn {
+  flex: 1;
+  background: #101e2e;
+  border: 1px solid #1e3a56;
+  color: #d4e8f4;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: monospace;
+}
+.tbtn:hover { border-color: #00b4d8; color: #00b4d8; }
+.tbtn.on { border-color: #ffd166; color: #ffd166; }
+
+/* Scores */
+.scores-wrap { padding: 10px 14px 14px; }
+.srow { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(23,42,62,0.6); }
+.sname { font-family: monospace; font-size: 10px; color: #456980; }
+.sval { font-family: monospace; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+.s-na { color: #456980; }
+.s-ok { color: #06d6a0; background: rgba(6,214,160,0.08); }
+.s-warn { color: #ffd166; background: rgba(255,209,102,0.08); }
+.s-crit { color: #ff2d4e; background: rgba(255,45,78,0.1); }
+.flags { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.flag {
+  font-family: monospace;
+  font-size: 9px;
+  color: #ff2d4e;
+  background: rgba(255,45,78,0.08);
+  border: 1px solid rgba(255,45,78,0.2);
+  border-radius: 3px;
+  padding: 3px 6px;
+}
+
+/* History */
+.hist-scroll { flex: 1; overflow-y: auto; }
+.hist-empty { padding: 20px 14px; font-family: monospace; font-size: 10px; color: #456980; text-align: center; }
+.hitem {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(23,42,62,0.5);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.hitem:hover { background: rgba(0,180,216,0.04); }
+.hitem.c-CRITICAL { border-left-color: #ff2d4e; }
+.hitem.c-HIGH { border-left-color: #ff8c42; }
+.hitem.c-MODERATE { border-left-color: #ffd166; }
+.hitem.c-LOW { border-left-color: #06d6a0; }
+.htop { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.htime { font-family: monospace; font-size: 9px; color: #456980; }
+.hbadge { font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 1px 5px; border-radius: 2px; }
+.b-CRITICAL { color:#ff2d4e; background:rgba(255,45,78,0.12); }
+.b-HIGH { color:#ff8c42; background:rgba(255,140,66,0.12); }
+.b-MODERATE { color:#ffd166; background:rgba(255,209,102,0.1); }
+.b-LOW { color:#06d6a0; background:rgba(6,214,160,0.1); }
+.hquery { font-size: 11px; opacity: 0.7; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; }
+
+/* ── CENTER ── */
+#center { display: flex; flex-direction: column; overflow: hidden; }
+
+/* Input */
+#inputarea {
+  background: #0c1622;
+  border-bottom: 1px solid #172a3e;
+  padding: 12px 16px;
+  flex-shrink: 0;
+}
+.row4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.row7 { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-bottom: 8px; }
+.fg { display: flex; flex-direction: column; gap: 3px; }
+.fg label { font-family: monospace; font-size: 8px; color: #456980; letter-spacing: 1.5px; text-transform: uppercase; }
+.fg input, .fg select, .fg textarea {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid #1e3a56;
+  border-radius: 4px;
+  color: #d4e8f4;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 6px 8px;
+  outline: none;
+  width: 100%;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #00b4d8; }
+.fg select option { background: #0c1622; }
+.qrow { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: flex-end; }
+#queryText { height: 58px; resize: none; font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; }
+#queryText::placeholder { color: #456980; }
+.abcol { display: flex; flex-direction: column; gap: 6px; }
+.btnprimary {
+  background: linear-gradient(135deg, #ff2d4e, #c0102a);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 0 16px rgba(255,45,78,0.25);
+}
+.btnprimary:hover { box-shadow: 0 0 28px rgba(255,45,78,0.5); transform: translateY(-1px); }
+.btnprimary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btnsec {
+  background: #101e2e;
+  border: 1px solid #1e3a56;
+  color: #456980;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 9px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btnsec:hover { border-color: #00b4d8; color: #d4e8f4; }
+.btnsec.rec { border-color: #ff2d4e; color: #ff2d4e; animation: pulse 1s infinite; }
+@keyframes pulse { 50%{box-shadow:0 0 10px rgba(255,45,78,0.4)} }
+
+/* Response */
+#resparea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+.empty-st {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  opacity: 0.3;
+}
+.empty-icon { font-size: 44px; }
+.empty-txt { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #456980; }
+.loading-st {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 14px;
+}
+.ring {
+  width: 46px; height: 46px;
+  border: 3px solid #1e3a56;
+  border-top-color: #ff2d4e;
+  border-right-color: #ff8c42;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-txt { font-family: monospace; font-size: 11px; color: #456980; letter-spacing: 2px; animation: blink2 1s infinite; }
+@keyframes blink2 { 50%{opacity:0.4} }
+
+/* Crit banner */
+.cbanner {
+  border-radius: 6px;
+  border-left: 4px solid;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: fadeup 0.3s ease;
+}
+@keyframes fadeup { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.cbanner.c-CRITICAL { border-color: #ff2d4e; background: rgba(255,45,78,0.07); }
+.cbanner.c-HIGH { border-color: #ff8c42; background: rgba(255,140,66,0.07); }
+.cbanner.c-MODERATE { border-color: #ffd166; background: rgba(255,209,102,0.06); }
+.cbanner.c-LOW { border-color: #06d6a0; background: rgba(6,214,160,0.06); }
+.clevel { font-size: 26px; font-weight: 900; letter-spacing: 3px; }
+.c-CRITICAL .clevel { color: #ff2d4e; }
+.c-HIGH .clevel { color: #ff8c42; }
+.c-MODERATE .clevel { color: #ffd166; }
+.c-LOW .clevel { color: #06d6a0; }
+.creason { font-size: 11px; color: #456980; margin-top: 3px; }
+.cmeta { font-family: monospace; font-size: 9px; color: #456980; }
+
+/* Blocks */
+.block {
+  background: #0c1622;
+  border: 1px solid #172a3e;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  animation: fadeup 0.3s ease;
+}
+.btitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #00b4d8;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btitle::before { content:''; width:2px; height:10px; background:#00b4d8; border-radius:2px; display:block; }
+.alist { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.alist li { font-size: 12px; padding: 4px 0 4px 16px; border-bottom: 1px solid rgba(23,42,62,0.4); position: relative; line-height: 1.4; }
+.alist li::before { content:'▶'; position:absolute; left:0; font-size:7px; color:#00b4d8; top:7px; }
+.alist li.urg { color: #ff6b80; }
+.alist li.urg::before { content:'⚠'; color:#ff2d4e; font-size:9px; }
+.atext { font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+.hcard {
+  background: #101e2e;
+  border: 1px solid #1e3a56;
+  border-left: 3px solid #00b4d8;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  animation: fadeup 0.3s ease;
+}
+.hname { font-size: 14px; font-weight: 700; color: #00b4d8; margin-bottom: 4px; }
+.hreason { font-size: 11px; color: #456980; line-height: 1.5; }
+.metarow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.metacard { background: #0c1622; border: 1px solid #172a3e; border-radius: 5px; padding: 10px 12px; }
+.mlab { font-size: 8px; color: #456980; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; font-family: monospace; }
+.mval { font-size: 13px; font-weight: 700; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-family: monospace; font-size: 9px; color: #456980; background: #0c1622; border: 1px solid #172a3e; border-radius: 3px; padding: 2px 7px; }
+
+/* ── RIGHT PANEL ── */
+#rpanel {
+  background: #0c1622;
+  border-left: 1px solid #172a3e;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tabs { display: flex; border-bottom: 1px solid #172a3e; flex-shrink: 0; }
+.tab {
+  flex: 1;
+  padding: 12px 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #456980;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.tab.on { color: #00b4d8; border-bottom-color: #00b4d8; }
+.tab:hover:not(.on) { color: #d4e8f4; }
+.tabpane { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+.tabpane.on { display: flex; }
+.qcard {
+  margin: 7px;
+  background: #101e2e;
+  border: 1px solid #172a3e;
+  border-radius: 5px;
+  padding: 11px;
+  cursor: pointer;
+}
+.qcard:hover { border-color: #1e3a56; background: rgba(0,180,216,0.04); }
+.qtitle { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #00b4d8; margin-bottom: 4px; }
+.qdesc { font-size: 10px; color: #456980; line-height: 1.5; }
+.qtrig { font-family: monospace; font-size: 8px; color: #456980; margin-top: 6px; opacity: 0.7; }
+.hospc {
+  margin: 7px;
+  background: #101e2e;
+  border: 1px solid #172a3e;
+  border-radius: 5px;
+  padding: 11px;
+}
+.hname2 { font-size: 12px; font-weight: 700; color: #d4e8f4; margin-bottom: 6px; }
+.hrow { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.hlab { font-family: monospace; font-size: 9px; color: #456980; }
+.hval { font-family: monospace; font-size: 9px; }
+.open { color: #06d6a0; }
+.diverted { color: #ff2d4e; }
+.upload-zone {
+  margin: 10px;
+  border: 2px dashed #1e3a56;
+  border-radius: 6px;
+  padding: 20px 14px;
+  text-align: center;
+  cursor: pointer;
+}
+.upload-zone:hover { border-color: #00b4d8; background: rgba(0,180,216,0.04); }
+.uz-icon { font-size: 24px; margin-bottom: 6px; }
+.uz-txt { font-family: monospace; font-size: 10px; color: #456980; line-height: 1.6; }
+.upload-st { margin: 0 10px 8px; font-family: monospace; font-size: 10px; padding: 6px 10px; border-radius: 4px; border: 1px solid #172a3e; color: #456980; display: none; }
+.upload-st.ok { color: #06d6a0; border-color: #06d6a0; background: rgba(6,214,160,0.06); display: block; }
+.upload-st.err { color: #ff2d4e; border-color: #ff2d4e; display: block; }
+.rptbtn {
+  margin: 10px;
+  background: rgba(123,94,167,0.15);
+  border: 1px solid #7b5ea7;
+  color: #c4a7e7;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.rptbtn:hover { background: rgba(123,94,167,0.25); }
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #101e2e;
+  border: 1px solid #1e3a56;
+  color: #d4e8f4;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: all 0.25s;
+  z-index: 9999;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="brand">
+    <div class="brand-icon">🚑</div>
+    <div class="brand-name"><span>MED</span>AI</div>
+  </div>
+  <div class="hstat"><span class="hstat-label">Time</span><span class="hstat-val" id="clock">--:--:--</span></div>
+  <div class="hstat"><span class="hstat-label">Incidents</span><span class="hstat-val" id="icount">0</span></div>
+  <div class="hstat"><span class="hstat-label">Session</span><span class="hstat-val" id="sessid" style="font-size:10px;">—</span></div>
+  <div class="hright">
+    <div class="pill pill-green" id="apistatus">● DEMO MODE</div>
+    <div class="pill pill-blue">EMS RAG v2</div>
+  </div>
+</div>
+
+<!-- ALERT -->
+<div id="alertbar">
+  <span>⚠</span>
+  <span id="alerttxt">CRITICAL INCIDENT</span>
+  <span id="alertclose" onclick="document.getElementById('alertbar').classList.remove('show')">✕</span>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- LEFT -->
+  <div id="sidebar">
+    <div class="sec">
+      <div class="sec-title">Incident Timer</div>
+      <div class="timer-wrap">
+        <div class="timer-num" id="timerdisplay">00:00</div>
+        <div class="timer-btns">
+          <button class="tbtn" id="tbtnstart" onclick="timerToggle()">▶ Start</button>
+          <button class="tbtn" onclick="timerReset()">↺ Reset</button>
+          <button class="tbtn" onclick="showToast('⊙ Lap: '+document.getElementById('timerdisplay').textContent)">⊙ Lap</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Medical Scores</div>
+      <div class="scores-wrap">
+        <div class="srow"><span class="sname">Shock Index</span><span class="sval s-na" id="s-si">—</span></div>
+        <div class="srow"><span class="sname">Shock Class</span><span class="sval s-na" id="s-sc">—</span></div>
+        <div class="srow"><span class="sname">NEWS2 Score</span><span class="sval s-na" id="s-news">—</span></div>
+        <div class="srow"><span class="sname">NEWS2 Risk</span><span class="sval s-na" id="s-nrisk">—</span></div>
+        <div class="flags" id="flags"></div>
+      </div>
+    </div>
+
+    <div class="sec-title">Incident History</div>
+    <div class="hist-scroll">
+      <div class="hist-empty" id="hempty">No incidents yet</div>
+      <div id="hlist"></div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div id="center">
+    <div id="inputarea">
+      <div class="row4">
+        <div class="fg"><label>Age</label><input type="number" id="f-age" placeholder="52"></div>
+        <div class="fg"><label>Sex</label>
+          <select id="f-sex">
+            <option value="">Unknown</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+        </div>
+        <div class="fg"><label>Chief Complaint</label><input type="text" id="f-cc" placeholder="chest pain, trauma..."></div>
+        <div class="fg"><label>Mechanism / MOI</label><input type="text" id="f-moi" placeholder="MVC, fall, stab..."></div>
+      </div>
+      <div class="row7">
+        <div class="fg"><label>HR bpm</label><input type="number" id="v-hr" placeholder="72" oninput="liveScores()"></div>
+        <div class="fg"><label>BP</label><input type="text" id="v-bp" placeholder="120/80" oninput="liveScores()"></div>
+        <div class="fg"><label>SpO2 %</label><input type="number" id="v-spo2" placeholder="98" oninput="liveScores()"></div>
+        <div class="fg"><label>RR /min</label><input type="number" id="v-rr" placeholder="16" oninput="liveScores()"></div>
+        <div class="fg"><label>GCS</label><input type="number" id="v-gcs" placeholder="15" min="3" max="15" oninput="liveScores()"></div>
+        <div class="fg"><label>Temp °C</label><input type="number" id="v-temp" placeholder="37.0" step="0.1"></div>
+        <div class="fg"><label>BGL mg/dL</label><input type="number" id="v-bgl" placeholder="100"></div>
+      </div>
+      <div class="qrow">
+        <div class="fg">
+          <textarea id="queryText" placeholder="Describe the incident… e.g. '52yo male collapsed, unresponsive, witness reports no pulse'"></textarea>
+        </div>
+        <div class="abcol">
+          <button class="btnprimary" id="dispbtn" onclick="runQuery()">⚡ DISPATCH</button>
+          <button class="btnsec" id="voicebtn" onclick="toggleVoice()">🎙️ Voice</button>
+        </div>
+        <div class="abcol">
+          <button class="btnsec" onclick="clearAll()">🗑 Clear</button>
+          <button class="btnsec" id="rptbtn2" onclick="genReport()" disabled>📋 Report</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resparea">
+      <div class="empty-st" id="emptystate">
+        <div class="empty-icon">📡</div>
+        <div class="empty-txt">Awaiting Incident Data</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div id="rpanel">
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('quick')">Quick Ref</button>
+      <button class="tab" onclick="switchTab('hospitals')">Hospitals</button>
+      <button class="tab" onclick="switchTab('upload')">Upload</button>
+    </div>
+    <div class="tabpane on" id="tab-quick"></div>
+    <div class="tabpane" id="tab-hospitals"></div>
+    <div class="tabpane" id="tab-upload" style="padding:10px 0; gap:0;">
+      <div style="padding:0 10px 8px; font-family:monospace; font-size:9px; color:#456980; line-height:1.8; letter-spacing:1px;">
+        UPLOAD PROTOCOL DOCS<br>Supports .txt and .pdf<br>Auto-indexed into RAG
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('fileinput').click()">
+        <div class="uz-icon">📁</div>
+        <div class="uz-txt">Click to upload<br>.txt or .pdf protocol</div>
+      </div>
+      <input type="file" id="fileinput" accept=".txt,.pdf" style="display:none" onchange="uploadFile(this.files[0])">
+      <div class="upload-st" id="uplst"></div>
+      <div style="padding:6px 10px; font-family:monospace; font-size:9px; color:#456980;">INDEXED SOURCES</div>
+      <div id="srclist" style="padding:0 10px; display:flex; flex-direction:column; gap:3px;">
+        <span style="font-family:monospace;font-size:10px;color:#456980;">cardiac_protocols.txt</span>
+        <span style="font-family:monospace;font-size:10px;color:#456980;">trauma_neuro_protocols.txt</span>
+        <span style="font-family:monospace;font-size:10px;color:#456980;">triage_criticality.txt</span>
+        <span style="font-family:monospace;font-size:10px;color:#456980;">hospital_directory.txt</span>
+      </div>
+      <div style="margin-top:auto; border-top:1px solid #172a3e; padding-top:10px;">
+        <button class="rptbtn" id="rptbtn" onclick="genReport()" disabled>📋 Generate Incident Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'http://localhost:8000';
+let sessionId = 'SES-' + Math.random().toString(36).slice(2,8).toUpperCase();
+let incCount = 0;
+let lastResp = null;
+let timerSec = 0;
+let timerOn = false;
+let timerIv = null;
+let isRec = false;
+let recog = null;
+
+document.getElementById('sessid').textContent = sessionId;
+
+// Clock
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false});
+}, 1000);
+
+// Timer
+function timerToggle() {
+  if (timerOn) {
+    clearInterval(timerIv);
+    timerOn = false;
+    document.getElementById('tbtnstart').textContent = '▶ Start';
+    document.getElementById('tbtnstart').classList.remove('on');
+  } else {
+    timerIv = setInterval(() => { timerSec++; updateTimer(); }, 1000);
+    timerOn = true;
+    document.getElementById('tbtnstart').textContent = '⏸ Pause';
+    document.getElementById('tbtnstart').classList.add('on');
+  }
+}
+function timerReset() {
+  clearInterval(timerIv);
+  timerOn = false; timerSec = 0;
+  document.getElementById('tbtnstart').textContent = '▶ Start';
+  document.getElementById('tbtnstart').classList.remove('on');
+  document.getElementById('timerdisplay').classList.remove('red');
+  updateTimer();
+}
+function updateTimer() {
+  const m = Math.floor(timerSec/60).toString().padStart(2,'0');
+  const s = (timerSec%60).toString().padStart(2,'0');
+  document.getElementById('timerdisplay').textContent = m+':'+s;
+  if (timerSec >= 3600) document.getElementById('timerdisplay').classList.add('red');
+}
+
+// Live scores
+function liveScores() {
+  const hr = parseInt(document.getElementById('v-hr').value);
+  const bp = document.getElementById('v-bp').value;
+  const spo2 = parseInt(document.getElementById('v-spo2').value);
+  const rr = parseInt(document.getElementById('v-rr').value);
+  const gcs = parseInt(document.getElementById('v-gcs').value);
+  const sys = parseSys(bp);
+
+  // Shock Index
+  if (hr && sys) {
+    const si = (hr/sys).toFixed(2);
+    const el = document.getElementById('s-si');
+    el.textContent = si;
+    el.className = 'sval ' + (si>=1.2?'s-crit':si>=1.0?'s-warn':'s-ok');
+    const sc = document.getElementById('s-sc');
+    sc.textContent = si>=1.2?'Severe':si>=1.0?'Moderate':'Normal';
+    sc.className = 'sval ' + (si>=1.2?'s-crit':si>=1.0?'s-warn':'s-ok');
+  }
+
+  // Flags
+  const fl = document.getElementById('flags');
+  fl.innerHTML = '';
+  const findings = [];
+  if (spo2 && spo2 < 90) findings.push('SpO2 '+spo2+'% — HYPOXIA');
+  if (hr && (hr<40||hr>180)) findings.push('HR '+hr+' — CRITICAL');
+  if (rr && (rr<8||rr>36)) findings.push('RR '+rr+' — CRITICAL');
+  if (gcs && gcs<=8) findings.push('GCS '+gcs+' — SEVERE');
+  if (sys && sys<90) findings.push('SBP '+sys+' — HYPOTENSION');
+  findings.forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'flag';
+    d.textContent = '⚠ '+f;
+    fl.appendChild(d);
+  });
+}
+
+function parseSys(bp) {
+  if (!bp) return null;
+  const n = parseInt(bp.split('/')[0]);
+  return isNaN(n) ? null : n;
+}
+
+// Voice
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('⚠ Use Chrome for voice input'); return;
+  }
+  if (isRec) { recog?.stop(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recog = new SR();
+  recog.continuous = false;
+  recog.interimResults = true;
+  recog.lang = 'en-US';
+  recog.onstart = () => {
+    isRec = true;
+    document.getElementById('voicebtn').classList.add('rec');
+    document.getElementById('voicebtn').textContent = '🔴 Listening...';
+    showToast('🎙️ Speak the incident description');
+  };
+  recog.onresult = e => {
+    document.getElementById('queryText').value = Array.from(e.results).map(r=>r[0].transcript).join('');
+  };
+  recog.onend = () => {
+    isRec = false;
+    document.getElementById('voicebtn').classList.remove('rec');
+    document.getElementById('voicebtn').textContent = '🎙️ Voice';
+  };
+  recog.start();
+}
+
+// Main query
+async function runQuery() {
+  const query = document.getElementById('queryText').value.trim();
+  if (!query) { document.getElementById('queryText').focus(); return; }
+
+  document.getElementById('dispbtn').disabled = true;
+  document.getElementById('emptystate')?.remove();
+  if (!timerOn) timerToggle();
+
+  document.getElementById('resparea').innerHTML = `
+    <div class="loading-st">
+      <div class="ring"></div>
+      <div class="loading-txt">MEDAI ANALYZING...</div>
+    </div>`;
+
+  const vitals = {};
+  const hr=document.getElementById('v-hr').value;
+  const bp=document.getElementById('v-bp').value;
+  const spo2=document.getElementById('v-spo2').value;
+  const rr=document.getElementById('v-rr').value;
+  const gcs=document.getElementById('v-gcs').value;
+  const temp=document.getElementById('v-temp').value;
+  const bgl=document.getElementById('v-bgl').value;
+  if(hr) vitals.hr=parseInt(hr);
+  if(bp) vitals.bp=bp;
+  if(spo2) vitals.spo2=parseInt(spo2);
+  if(rr) vitals.rr=parseInt(rr);
+  if(gcs) vitals.gcs=parseInt(gcs);
+  if(temp) vitals.temp=parseFloat(temp);
+  if(bgl) vitals.bgl=parseFloat(bgl);
+
+  const payload = {
+    query,
+    patient_age: document.getElementById('f-age').value ? parseInt(document.getElementById('f-age').value) : null,
+    patient_sex: document.getElementById('f-sex').value || null,
+    chief_complaint: document.getElementById('f-cc').value || null,
+    mechanism: document.getElementById('f-moi').value || null,
+    vitals: Object.keys(vitals).length>0 ? vitals : null,
+    session_id: sessionId,
+  };
+
+  let data;
+  try {
+    const res = await fetch(API+'/query', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(20000)
+    });
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    data = await res.json();
+    document.getElementById('apistatus').textContent = '● API ONLINE';
+  } catch(e) {
+    data = demoResponse(query, vitals);
+    document.getElementById('apistatus').textContent = '● DEMO MODE';
+  }
+
+  renderResp(data);
+  addHistory(query, data);
+  lastResp = {...data, ...payload};
+  document.getElementById('dispbtn').disabled = false;
+  document.getElementById('rptbtn').disabled = false;
+  document.getElementById('rptbtn2').disabled = false;
+  incCount++;
+  document.getElementById('icount').textContent = incCount;
+
+  if (data.criticality === 'CRITICAL') {
+    document.getElementById('alerttxt').textContent = '⚠ CRITICAL — '+data.criticality_reason;
+    document.getElementById('alertbar').classList.add('show');
+  } else {
+    document.getElementById('alertbar').classList.remove('show');
+  }
+
+  // Update scores panel
+  if (data.scores) {
+    const s = data.scores;
+    if (s.shock_index) {
+      document.getElementById('s-si').textContent = s.shock_index;
+      document.getElementById('s-si').className = 'sval '+(s.shock_index>=1.2?'s-crit':s.shock_index>=1.0?'s-warn':'s-ok');
+    }
+    if (s.shock_class) document.getElementById('s-sc').textContent = s.shock_class;
+    if (s.news2_score !== null && s.news2_score !== undefined) {
+      document.getElementById('s-news').textContent = s.news2_score;
+      document.getElementById('s-news').className = 'sval '+(s.news2_score>=7?'s-crit':s.news2_score>=5?'s-warn':'s-ok');
+    }
+    if (s.news2_risk) document.getElementById('s-nrisk').textContent = s.news2_risk;
+  }
+}
+
+function renderResp(d) {
+  const actions = (d.immediate_actions||[]);
+  const actHtml = actions.length ? `
+    <div class="block">
+      <div class="btitle">Immediate Actions</div>
+      <ul class="alist">
+        ${actions.map(a=>`<li class="${a.includes('⚠')?'urg':''}">${a}</li>`).join('')}
+      </ul>
+    </div>` : '';
+
+  const hosp = d.hospital || {};
+  const hospHtml = hosp.primary ? `
+    <div class="hcard">
+      <div class="btitle">Hospital Routing</div>
+      <div class="hname">🏥 ${hosp.primary}</div>
+      ${hosp.primary_reason?`<div class="hreason">${hosp.primary_reason.slice(0,200)}</div>`:''}
+    </div>` : '';
+
+  const confColor = d.confidence==='HIGH'?'#06d6a0':d.confidence==='MEDIUM'?'#ffd166':'#456980';
+
+  const tags = [...(d.relevant_protocols||[]).map(p=>`<span class="tag" style="color:#00b4d8;">📋 ${p}</span>`),
+                ...(d.sources||[]).map(s=>`<span class="tag">📄 ${s}</span>`)].join('');
+
+  document.getElementById('resparea').innerHTML = `
+    <div class="cbanner c-${d.criticality}">
+      <div>
+        <div class="clevel">${d.criticality}</div>
+        <div class="creason">${d.criticality_reason||''}</div>
+      </div>
+      <div class="cmeta">${new Date().toLocaleTimeString('en-US',{hour12:false})}</div>
+    </div>
+    ${actHtml}
+    <div class="block">
+      <div class="btitle">Full Assessment</div>
+      <div class="atext">${d.answer}</div>
+    </div>
+    ${hospHtml}
+    <div class="metarow">
+      <div class="metacard"><div class="mlab">Confidence</div><div class="mval" style="color:${confColor}">${d.confidence}</div></div>
+      <div class="metacard"><div class="mlab">Response Time</div><div class="mval" style="font-size:12px;font-family:monospace;">${d.response_time_ms?d.response_time_ms+'ms':'—'}</div></div>
+      <div class="metacard"><div class="mlab">Incident ID</div><div class="mval" style="color:#00b4d8;font-size:11px;font-family:monospace;">${d.incident_id||'—'}</div></div>
+    </div>
+    ${tags?`<div class="tags">${tags}</div>`:''}
+  `;
+}
+
+function addHistory(query, data) {
+  document.getElementById('hempty').style.display = 'none';
+  const item = document.createElement('div');
+  item.className = `hitem c-${data.criticality}`;
+  item.innerHTML = `
+    <div class="htop">
+      <span class="htime">${new Date().toLocaleTimeString('en-US',{hour12:false})}</span>
+      <span class="hbadge b-${data.criticality}">${data.criticality}</span>
+    </div>
+    <div class="hquery">${query}</div>`;
+  item.onclick = () => renderResp(data);
+  document.getElementById('hlist').prepend(item);
+}
+
+function clearAll() {
+  ['f-age','f-sex','f-cc','f-moi','v-hr','v-bp','v-spo2','v-rr','v-gcs','v-temp','v-bgl','queryText'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('resparea').innerHTML = `
+    <div class="empty-st" id="emptystate">
+      <div class="empty-icon">📡</div>
+      <div class="empty-txt">Awaiting Incident Data</div>
+    </div>`;
+  document.getElementById('alertbar').classList.remove('show');
+  document.getElementById('flags').innerHTML = '';
+  ['s-si','s-sc','s-news','s-nrisk'].forEach(id => {
+    document.getElementById(id).textContent = '—';
+    document.getElementById(id).className = 'sval s-na';
+  });
+}
+
+// Tabs
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    b.classList.toggle('on',['quick','hospitals','upload'][i]===name);
+  });
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+}
+
+// Quick refs
+const qrefs = [
+  {title:'STEMI Protocol',desc:'ST elevation ≥1mm in 2 leads → Cath lab. Aspirin 324mg, IV access, O2. Door-to-balloon < 90 min.',trig:'chest pain, ECG changes'},
+  {title:'BEFAST Stroke',desc:'Balance, Eyes, Face, Arm, Speech, Time. Note exact onset. Keep HOB flat. NPO.',trig:'facial droop, arm weakness'},
+  {title:'Shock Index',desc:'HR ÷ SBP. ≥1.2 = severe shock. Aggressive resuscitation immediately.',trig:'hypotension + tachycardia'},
+  {title:'Status Epilepticus',desc:'Seizure > 5 min → Midazolam 10mg IM. No response → Lorazepam 4mg IV.',trig:'active seizure > 5 min'},
+  {title:'Anaphylaxis',desc:'Epi 0.3mg IM lateral thigh IMMEDIATELY. O2, IV, 1-2L NS, Diphenhydramine 50mg.',trig:'allergic reaction + airway'},
+  {title:'Cardiac Arrest',desc:'CPR 30:2, 100-120/min, 2-2.4 inch depth. Shock VF/pVT 200J. Epi 1mg q3-5min.',trig:'unresponsive, no pulse'},
+  {title:'Critical Vitals',desc:'SpO2<90% | HR<40 or >180 | RR<8 or >36 | GCS≤8 | SBP<80 → ALL = CRITICAL.',trig:'any abnormal vital sign'},
+  {title:'Pediatric Shock',desc:'Shock BP = SBP < 70+(2×age). Neonatal fever >38°C = CRITICAL.',trig:'pediatric patient'},
+];
+const qt = document.getElementById('tab-quick');
+qrefs.forEach(r => {
+  const c = document.createElement('div');
+  c.className = 'qcard';
+  c.innerHTML = `<div class="qtitle">${r.title}</div><div class="qdesc">${r.desc}</div><div class="qtrig">Use for: ${r.trig}</div>`;
+  c.onclick = () => { document.getElementById('queryText').value = 'Protocol for '+r.title+': '+r.desc; showToast('✓ Loaded: '+r.title); };
+  qt.appendChild(c);
+});
+
+// Hospitals
+const hospitals = [
+  {name:'Metro General Hospital',type:'Level I Trauma + STEMI + Stroke',div:false,wait:'18 min'},
+  {name:'Riverside Medical Center',type:'Level II Trauma + STEMI + tPA',div:false,wait:'25 min'},
+  {name:"St. Catherine's Community",type:'Level III — stabilize + transfer',div:true,wait:'45 min'},
+  {name:"Children's Specialty Hospital",type:'Pediatric Level I (age 0-18)',div:false,wait:'22 min'},
+  {name:'Eastside Freestanding ED',type:'Minor emergencies only',div:false,wait:'10 min'},
+];
+const ht = document.getElementById('tab-hospitals');
+hospitals.forEach(h => {
+  const c = document.createElement('div');
+  c.className = 'hospc';
+  c.innerHTML = `
+    <div class="hname2">${h.name}</div>
+    <div class="hrow"><span class="hlab">Type</span><span class="hval" style="font-size:9px;color:#d4e8f4;">${h.type}</span></div>
+    <div class="hrow"><span class="hlab">Diversion</span><span class="hval ${h.div?'diverted':'open'}">${h.div?'⚠ DIVERTED':'✓ OPEN'}</span></div>
+    <div class="hrow"><span class="hlab">Est. Wait</span><span class="hval" style="color:#ffd166;">${h.wait}</span></div>`;
+  ht.appendChild(c);
+});
+
+// Upload
+async function uploadFile(file) {
+  if (!file) return;
+  const st = document.getElementById('uplst');
+  st.className = 'upload-st';
+  st.textContent = '⏳ Uploading '+file.name+'...';
+  st.style.display = 'block';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('category', 'protocols');
+    const res = await fetch(API+'/upload-protocol', {method:'POST', body:fd, signal:AbortSignal.timeout(30000)});
+    if (res.ok) {
+      const d = await res.json();
+      st.className = 'upload-st ok';
+      st.textContent = '✓ Indexed: '+d.filename+' ('+d.chunks_added+' chunks)';
+      const e = document.createElement('span');
+      e.style.cssText = 'font-family:monospace;font-size:10px;color:#06d6a0;';
+      e.textContent = '✓ '+d.filename;
+      document.getElementById('srclist').appendChild(e);
+      showToast('✓ '+file.name+' indexed');
+    } else throw new Error();
+  } catch {
+    st.className = 'upload-st err';
+    st.textContent = '✗ Backend offline — start server first';
+  }
+}
+
+// Report
+function genReport() {
+  if (!lastResp) { showToast('Run a query first'); return; }
+  const lines = [
+    'EMERGENCY INCIDENT REPORT',
+    '═══════════════════════════════',
+    'Report ID:   RPT-'+Math.random().toString(36).slice(2,10).toUpperCase(),
+    'Generated:   '+new Date().toLocaleString(),
+    'Incident ID: '+(lastResp.incident_id||'—'),
+    'Criticality: '+lastResp.criticality,
+    '',
+    '─── PATIENT ───────────────────',
+    'Age: '+(lastResp.patient_age||'—'),
+    'Sex: '+(lastResp.patient_sex||'—'),
+    'Chief Complaint: '+(lastResp.chief_complaint||'—'),
+    'Mechanism: '+(lastResp.mechanism||'—'),
+    '',
+    '─── ASSESSMENT ────────────────',
+    lastResp.answer||'',
+    '',
+    '─── IMMEDIATE ACTIONS ─────────',
+    ...(lastResp.immediate_actions||[]).map((a,i)=>(i+1)+'. '+a),
+    '',
+    '─── HOSPITAL ──────────────────',
+    'Primary: '+((lastResp.hospital?.primary)||'—'),
+    '',
+    '─── PROTOCOLS ─────────────────',
+    ...(lastResp.relevant_protocols||[]).map(p=>'• '+p),
+    '',
+    '═══════════════════════════════',
+    'Generated by MEDAI Emergency Dispatch AI',
+  ];
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'incident-report-'+Date.now()+'.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📋 Report downloaded!');
+}
+
+// Demo response
+function demoResponse(query, vitals) {
+  const q = query.toLowerCase();
+  let crit = 'MODERATE', answer = '', actions = [], hospital = {};
+
+  if (q.includes('chest pain')||q.includes('cardiac')||q.includes('heart')||q.includes('stemi')) {
+    crit = 'CRITICAL';
+    actions = ['Position semi-recumbent (45°)','O2 if SpO2 < 94%','12-lead ECG within 10 min','Aspirin 324mg PO (chew)','Large-bore IV access','Continuous cardiac monitoring'];
+    hospital = {primary:'Metro General Hospital',primary_reason:'Level I — 24/7 PCI cath lab, avg door-to-balloon 52 min'};
+    answer = 'CRITICALITY: CRITICAL — Suspected STEMI / Acute Coronary Syndrome\n\nIMMEDIATE ACTIONS:\n1. Position patient semi-recumbent\n2. 12-lead ECG within 10 min — look for ST elevation ≥ 1mm\n3. Aspirin 324mg PO (chew)\n4. Large-bore IV, continuous monitoring\n\nPROTOCOL GUIDANCE (C-1):\nIf STEMI confirmed → cath lab activation immediately.\n\nHOSPITAL RECOMMENDATION: Metro General Hospital — Level I PCI center.\n\nROUTING NOTES: Pre-notify: "STEMI Alert, ETA [X] min"\n\nADDITIONAL NOTES: Door-to-balloon goal < 90 min. Do not delay transport.';
+  } else if (q.includes('stroke')||q.includes('facial droop')||q.includes('arm weakness')) {
+    crit = 'CRITICAL';
+    actions = ['Note EXACT onset time','BEFAST assessment','Keep HOB flat 0-15°','NPO — aspiration risk','Do NOT give glucose unless BGL < 60','Pre-notify Stroke Alert'];
+    hospital = {primary:'Metro General Hospital',primary_reason:'Comprehensive Stroke Center — thrombectomy 24/7'};
+    answer = 'CRITICALITY: CRITICAL — Acute Stroke Suspected\n\nIMMEDIATE ACTIONS:\n1. Document exact symptom onset time\n2. Cincinnati Stroke Scale: Face/Arm/Speech\n3. Keep HOB flat\n4. NPO strictly\n\nPROTOCOL GUIDANCE (N-1):\ntPA window < 4.5 hours. Thrombectomy window < 24 hours.\n\nHOSPITAL RECOMMENDATION: Metro General Hospital — Comprehensive Stroke Center.\n\nROUTING NOTES: Pre-notify: "Stroke Alert, onset [time], ETA [X] min"';
+  } else if (q.includes('trauma')||q.includes('accident')||q.includes('fall')||q.includes('mvc')) {
+    crit = 'CRITICAL';
+    actions = ['A — Airway with C-spine control','B — Breathing assessment','C — Hemorrhage control','D — GCS, pupils, BGL','E — Full body exposure','Minimize scene time — Golden Hour'];
+    hospital = {primary:'Metro General Hospital',primary_reason:'Level I Trauma — 24/7 trauma, neuro, cardiac surgery'};
+    answer = 'CRITICALITY: CRITICAL — Major Trauma\n\nPRIMARY SURVEY (ABCDE):\nA - Airway with C-spine\nB - Bilateral breath sounds\nC - Control hemorrhage\nD - Neuro exam GCS/pupils\nE - Expose full body\n\nPROTOCOL GUIDANCE (T-1):\nGolden Hour: scene-to-OR < 60 min. Shock Index ≥ 1.2 = aggressive resuscitation.\n\nHOSPITAL RECOMMENDATION: Metro General Hospital — Level I Trauma.\n\nROUTING NOTES: Trauma Alert: "Level 1, ETA [X] min, mechanism [Y], GCS [Z]"';
+  } else if (q.includes('seizure')) {
+    crit = 'HIGH';
+    actions = ['Protect from injury — do NOT restrain','Time the seizure','If > 5 min: Midazolam 10mg IM','Check BGL','Position lateral recovery post-seizure'];
+    hospital = {primary:'Riverside Medical Center',primary_reason:'Level II ED with neurology'};
+    answer = 'CRITICALITY: HIGH — Active Seizure\n\nIMMEDIATE ACTIONS:\n1. Protect from injury, time seizure\n2. If > 5 min: STATUS EPILEPTICUS → Midazolam 10mg IM\n3. Check BGL — hypoglycemia causes seizures\n4. Lateral recovery position after cessation\n\nPROTOCOL GUIDANCE (N-2):\nStatus = seizure > 5 min. First line: Midazolam 10mg IM.\n\nHOSPITAL RECOMMENDATION: Riverside Medical Center or Metro General.\n\nADDITIONAL NOTES: First-time seizure with fever → meningitis risk.';
+  } else {
+    crit = 'MODERATE';
+    actions = ['Full vital signs every 5 min','Focused physical exam','SAMPLE history','IV access if indicated','Continuous monitoring'];
+    hospital = {primary:'Riverside Medical Center',primary_reason:'Level II ED appropriate for moderate acuity'};
+    answer = 'CRITICALITY: MODERATE — Requires assessment\n\nPlease obtain full vital signs and conduct a focused exam.\n\nIMMEDIATE ACTIONS:\n1. Full vital signs\n2. Focused history and physical\n3. IV access\n4. Monitor for deterioration\n\nHOSPITAL RECOMMENDATION: Riverside Medical Center for moderate acuity.\n\nADDITIONAL NOTES: Reassess every 5 min. Upgrade if vitals worsen.';
+  }
+
+  // Check vitals for critical override
+  if (vitals) {
+    const sys = vitals.bp ? parseInt(vitals.bp.split('/')[0]) : null;
+    if ((vitals.spo2 && vitals.spo2<90)||(vitals.gcs && vitals.gcs<=8)||(sys && sys<80)) crit = 'CRITICAL';
+    if (vitals.hr && sys && vitals.hr/sys >= 1.2) crit = 'CRITICAL';
+  }
+
+  return {
+    answer, criticality: crit,
+    criticality_reason: 'Demo assessment based on '+query.split(' ').slice(0,4).join(' ')+'...',
+    hospital, immediate_actions: actions,
+    relevant_protocols: ['PROTOCOL C-1','PROTOCOL T-1'],
+    confidence: 'HIGH',
+    sources: ['cardiac_protocols.txt','triage_criticality.txt','hospital_directory.txt'],
+    response_time_ms: Math.floor(Math.random()*400+200),
+    incident_id: 'INC-'+Math.random().toString(36).slice(2,8).toUpperCase(),
+    scores: null,
+  };
+}
+
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key==='Enter') runQuery();
+});
+
+// Check API on load
+fetch(API+'/health').then(r=>r.json()).then(d=>{
+  document.getElementById('apistatus').textContent = '● API ONLINE';
+}).catch(()=>{
+  document.getElementById('apistatus').textContent = '● DEMO MODE';
+});
+</script>
+</body>
+</html>
