@@ -1,0 +1,30 @@
+# Optimized dependencies for Lambda deployment
+# Removes large ML models and unnecessary packages
+
+# LLM & RAG essentials (lightweight)
+langchain==0.3.0
+langchain-community==0.3.0
+langchain-core==0.3.0
+langchain-groq==0.2.0
+
+# API framework (minimal)
+fastapi==0.115.0
+uvicorn==0.30.0  # Removed [standard] extras
+pydantic==2.9.0
+python-multipart==0.0.12
+sse-starlette==2.1.0
+mangum==0.18.0  # FastAPI to Lambda ASGI adapter
+
+# Lightweight utilities
+python-dotenv==1.0.1
+httpx==0.27.0
+pypdf==5.0.0
+
+# Vector DB (use AWS Lambda Layer for this)
+# chromadb==0.5.0  # MOVED TO LAMBDA LAYER
+
+# Embeddings (use API instead of local model)
+# sentence-transformers==3.1.0  # MOVED TO LAMBDA LAYER OR USE API
+
+# Langchain-openai (only if needed)
+# langchain-openai==0.2.0  # Optional - comment out if using Groq only
